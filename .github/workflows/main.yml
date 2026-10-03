@@ -1,0 +1,39 @@
+name: Build Scarlet Skips
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: devkitpro/devkitarm:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install 3DS libraries
+        run: dkp-pacman -Syu --noconfirm 3ds-dev
+
+      - name: Install bannertool and makerom
+        run: |
+          wget -q https://github.com/diasurgical/bannertool/releases/download/1.2.0/bannertool.zip -O bannertool.zip
+          unzip -j bannertool.zip linux-x86_64/bannertool -d /opt/devkitpro/tools/bin
+          wget -q https://github.com/3DSGuy/Project_CTR/releases/download/makerom-v0.18/makerom-v0.18-ubuntu_x86_64.zip -O makerom.zip
+          unzip -j makerom.zip makerom -d /opt/devkitpro/tools/bin
+          chmod +x /opt/devkitpro/tools/bin/bannertool /opt/devkitpro/tools/bin/makerom
+
+      - name: Build
+        run: |
+          make clean || true
+          make
+          ls -lh
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Scarlet-Skips-3DS
+          path: |
+            *.cia
+            *.3dsx
+            *.smdh
+          if-no-files-found: error
