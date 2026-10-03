@@ -1,4 +1,4 @@
-name: Build Scarlet Skips
+name: Scarlet Skips
 
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
           unzip -j makerom.zip makerom -d /opt/devkitpro/tools/bin
           chmod +x /opt/devkitpro/tools/bin/bannertool /opt/devkitpro/tools/bin/makerom
 
-      - name: Build
+      - name: Scarlet skips
         run: |
           make clean || true
           make
